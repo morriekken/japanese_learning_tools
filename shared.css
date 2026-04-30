@@ -1,0 +1,137 @@
+/* ── Reset ───────────────────────────────────────── */
+*, *::before, *::after {
+  margin: 0; padding: 0; box-sizing: border-box;
+}
+
+/* ── Design tokens ───────────────────────────────── */
+:root {
+  --bg:          #0c0c0f;
+  --surface:     #13131a;
+  --gold:        #c9a86c;
+  --gold-dim:    #7a6340;
+  --blue-deep:   #12203a;
+  --text-muted:  #3a3a4a;
+  --text-dim:    #555568;
+  --text-body:   #999aaa;
+  --border-soft: rgba(201,168,108,0.15);
+}
+
+/* ── Base ────────────────────────────────────────── */
+html, body {
+  min-height: 100%;
+}
+
+body {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(201,168,108,0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 80% 110%, rgba(18,32,58,0.4) 0%, transparent 70%);
+  font-family: 'Noto Sans JP', sans-serif;
+  color: var(--text-body);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── Header ornament ─────────────────────────────── */
+header {
+  text-align: center;
+}
+
+.logo-rule {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+.rule-line {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold-dim));
+}
+.rule-line.right {
+  background: linear-gradient(to left, transparent, var(--gold-dim));
+}
+
+.logo-diamond {
+  width: 6px; height: 6px;
+  background: var(--gold);
+  transform: rotate(45deg);
+  opacity: 0.7;
+}
+
+.title-ja {
+  font-family: 'Noto Serif JP', serif;
+  font-weight: 900;
+  color: var(--gold);
+  letter-spacing: 0.2em;
+  line-height: 1;
+}
+
+.title-en {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  letter-spacing: 0.6em;
+  text-transform: uppercase;
+  margin-top: 0.5rem;
+}
+
+/* ── Back navigation ─────────────────────────────── */
+.back-link {
+  align-self: flex-start;
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  text-decoration: none;
+  margin-bottom: 1.5rem;
+  transition: color 0.18s;
+}
+.back-link:hover { color: var(--gold); }
+
+/* ── Button ──────────────────────────────────────── */
+.btn {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  padding: 0.75rem 1.6rem;
+  border: 1px solid var(--gold-dim);
+  background: transparent;
+  color: var(--gold);
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, border-color 0.18s;
+  border-radius: 2px;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.18s cubic-bezier(0.23, 1, 0.32, 1);
+  z-index: 0;
+}
+
+.btn:hover::before { transform: scaleX(1); }
+.btn:hover { color: var(--bg); border-color: var(--gold); }
+.btn span { position: relative; z-index: 1; }
+
+/* ── Footer ──────────────────────────────────────── */
+footer {
+  font-family: 'Cinzel', serif;
+  font-size: 0.5rem;
+  letter-spacing: 0.35em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  text-align: center;
+}
