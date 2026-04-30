@@ -9,162 +9,94 @@
 <link rel="stylesheet" href="../shared.css">
 <script src="katakana-data.js"></script>
 <style>
+:root {
+  --card-front:     #f4ede0;
+  --card-front-ink: #1c1410;
+}
+
 body {
   padding: 2.5rem 1.5rem 5rem;
 }
 
-.app {
-  max-width: 860px;
-  width: 100%;
-}
+.view { display: contents; }
 
 /* ── Header ───────────────────────────────────── */
 header {
   margin-bottom: 2.5rem;
 }
-
 .title-ja {
   font-size: clamp(2rem, 6vw, 3rem);
 }
 
-/* ── Progress ─────────────────────────────────── */
-.overall-progress {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  background: var(--surface);
-  border: 1px solid var(--border-soft);
-  border-radius: 6px;
-  padding: 12px 16px;
-  margin-bottom: 24px;
+/* ── Mastered summary ─────────────────────────── */
+.mastered-summary {
   font-family: 'Cinzel', serif;
-  font-size: 0.6rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--text-dim);
-}
-.overall-progress strong { color: var(--gold); font-weight: 600; }
-.prog-track {
-  flex: 1;
-  height: 3px;
-  background: rgba(201,168,108,0.12);
-  border-radius: 2px;
-  overflow: hidden;
-}
-.prog-fill {
-  height: 100%;
-  border-radius: 2px;
-  background: var(--gold);
-  transition: width 0.5s ease;
-}
-
-/* ── Chapter nav ──────────────────────────────── */
-.chapter-nav {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-  margin-bottom: 28px;
-  justify-content: center;
-}
-.ch-btn {
-  padding: 6px 13px;
-  border: 1px solid var(--border-soft);
-  border-radius: 3px;
-  background: transparent;
-  font-family: 'Cinzel', serif;
-  font-size: 0.6rem;
-  letter-spacing: 0.08em;
-  color: var(--text-dim);
-  cursor: pointer;
-  transition: border-color 0.15s, color 0.15s, background 0.15s;
-}
-.ch-btn:hover {
-  border-color: var(--gold-dim);
-  color: var(--gold);
-}
-.ch-btn.active {
-  border-color: var(--gold);
-  color: var(--gold);
-  background: rgba(201,168,108,0.08);
-}
-
-/* ── Screen transition ─────────────────────────── */
-.screen { display: none; }
-.screen.active { display: block; animation: slideIn 0.3s ease; }
-@keyframes slideIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ── Cluster card ─────────────────────────────── */
-.cluster-card {
-  background: var(--surface);
-  border: 1px solid var(--border-soft);
-  border-radius: 8px;
-  margin-bottom: 14px;
-  overflow: hidden;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-.cluster-card:hover {
-  border-color: rgba(201,168,108,0.3);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
-}
-
-.cluster-header {
-  padding: 14px 20px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  border-bottom: 1px solid transparent;
-  cursor: pointer;
-  user-select: none;
-  transition: border-color 0.2s;
-}
-.cluster-card.open .cluster-header {
-  border-bottom-color: var(--border-soft);
-}
-
-.cluster-badge {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: 'Cinzel', serif;
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: white;
-  flex-shrink: 0;
-}
-.cluster-title {
-  font-family: 'Noto Sans JP', sans-serif;
-  font-weight: 500;
-  font-size: 0.88rem;
-  color: var(--text-body);
-  flex: 1;
-}
-.cluster-subtitle {
-  font-family: 'Noto Sans JP', sans-serif;
-  font-size: 0.7rem;
-  color: var(--text-dim);
-  margin-top: 2px;
-}
-.cluster-chars-preview {
-  font-family: 'Noto Sans JP', sans-serif;
-  font-size: 1.15rem;
-  color: var(--text-dim);
-  letter-spacing: 4px;
-}
-.cluster-toggle {
   font-size: 0.65rem;
-  color: var(--gold-dim);
-  transition: transform 0.2s;
+  letter-spacing: 0.2em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  text-align: center;
 }
-.cluster-card.open .cluster-toggle { transform: rotate(180deg); }
-.cluster-mastered-badge {
+
+/* ── Cluster tile grid ────────────────────────── */
+.cluster-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+  width: 100%;
+  max-width: 580px;
+}
+
+.cluster-tile {
+  background: rgba(201,168,108,0.03);
+  border: 1px solid rgba(201,168,108,0.18);
+  border-radius: 6px;
+  padding: 1.5rem 1rem 1.25rem;
+  cursor: pointer;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+.cluster-tile:hover {
+  border-color: rgba(201,168,108,0.5);
+  box-shadow: 0 4px 24px rgba(201,168,108,0.07), 0 2px 10px rgba(0,0,0,0.35);
+  transform: translateY(-2px);
+}
+
+.tile-kana-preview {
+  font-family: 'Noto Serif JP', serif;
+  font-weight: 900;
+  font-size: 1.4rem;
+  color: var(--card-front-ink);
+  background: var(--card-front);
+  background-image: radial-gradient(ellipse at 30% 30%, rgba(255,255,240,0.5) 0%, transparent 60%);
+  width: 62px;
+  height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  border: 1px solid rgba(201,168,108,0.25);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.6);
+  flex-shrink: 0;
+  letter-spacing: 0.1em;
+}
+
+.tile-cluster-name {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 0.7rem;
+  color: var(--gold-dim);
+  letter-spacing: 0.08em;
+  line-height: 1.5;
+}
+
+.tile-mastered-badge {
   font-family: 'Cinzel', serif;
-  font-size: 0.52rem;
+  font-size: 0.5rem;
   letter-spacing: 0.15em;
   background: rgba(42,157,143,0.12);
   border: 1px solid rgba(42,157,143,0.3);
@@ -173,11 +105,39 @@ header {
   border-radius: 2px;
 }
 
-.cluster-body {
-  display: none;
-  padding: 20px;
+/* ── Detail view ──────────────────────────────── */
+.detail-container {
+  max-width: 580px;
+  width: 100%;
 }
-.cluster-card.open .cluster-body { display: block; }
+
+.detail-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.detail-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.detail-title {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-body);
+}
+
+.detail-subtitle {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  margin-top: 3px;
+}
 
 /* ── Comparison row ───────────────────────────── */
 .comparison {
@@ -191,22 +151,29 @@ header {
 .kana-panel {
   flex: 1;
   min-width: 130px;
-  border: 1px solid var(--border-soft);
+  border: 1px solid rgba(201,168,108,0.25);
   border-radius: 8px;
   padding: 18px 14px;
   text-align: center;
   position: relative;
   cursor: pointer;
-  background: rgba(255,255,255,0.02);
-  transition: border-color 0.2s, background 0.2s, transform 0.2s;
+  background: var(--card-front);
+  background-image: radial-gradient(ellipse at 30% 30%, rgba(255,255,240,0.5) 0%, transparent 60%);
+  box-shadow:
+    0 2px 8px rgba(0,0,0,0.45),
+    0 8px 24px rgba(0,0,0,0.3),
+    inset 0 1px 0 rgba(255,255,255,0.6);
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
 }
 .kana-panel:hover {
   transform: translateY(-2px);
-  border-color: rgba(201,168,108,0.3);
+  box-shadow:
+    0 4px 16px rgba(201,168,108,0.15),
+    0 12px 32px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.7);
 }
 .kana-panel.learned {
-  border-color: rgba(42,157,143,0.35);
-  background: rgba(42,157,143,0.05);
+  border-color: rgba(42,157,143,0.5);
 }
 .kana-panel .learned-tick {
   position: absolute;
@@ -221,34 +188,36 @@ header {
 .kana-panel.learned .learned-tick { opacity: 1; }
 
 .kana-glyph {
-  font-family: 'Noto Sans JP', sans-serif;
+  font-family: 'Noto Serif JP', serif;
   font-size: 4rem;
   line-height: 1;
   margin-bottom: 6px;
+  color: var(--gold);
 }
 .kana-roman {
   font-family: 'Cinzel', serif;
   font-size: 0.82rem;
   letter-spacing: 0.2em;
   margin-bottom: 10px;
+  color: var(--card-front-ink);
 }
 .kana-mnemonic {
-  font-family: 'Noto Sans JP', sans-serif;
+  font-family: 'Noto Serif JP', serif;
   font-size: 0.7rem;
-  color: var(--text-dim);
+  color: #5a4a3a;
   line-height: 1.6;
   font-weight: 300;
 }
 .kana-sound-btn {
   margin-top: 10px;
   background: none;
-  border: 1px solid var(--border-soft);
+  border: 1px solid rgba(0,0,0,0.12);
   border-radius: 20px;
   padding: 4px 12px;
   font-size: 0.65rem;
   cursor: pointer;
   font-family: 'Cinzel', serif;
-  color: var(--text-dim);
+  color: #5a4a3a;
   transition: border-color 0.15s, color 0.15s;
 }
 .kana-sound-btn:hover {
@@ -343,16 +312,9 @@ header {
   margin-top: 18px;
   padding: 12px;
   border-radius: 4px;
-  border: none;
-  font-family: 'Cinzel', serif;
   font-size: 0.62rem;
   letter-spacing: 0.28em;
-  text-transform: uppercase;
-  cursor: pointer;
-  color: white;
-  transition: opacity 0.18s, transform 0.15s;
 }
-.cluster-quiz-btn:hover { opacity: 0.85; transform: translateY(-1px); }
 
 /* ── Modal ────────────────────────────────────── */
 .modal-bg {
@@ -541,31 +503,35 @@ header {
 </head>
 <body>
 
-<a class="back-link" href="../index.html">← Home</a>
+<!-- ═══════════ Index view ══════════════════════════ -->
+<div id="indexView" class="view">
 
-<div class="app">
+  <a class="back-link" href="../index.html">← Home</a>
 
-<header>
-  <div class="logo-rule">
-    <div class="rule-line"></div>
-    <div class="logo-diamond"></div>
-    <div class="rule-line right"></div>
-  </div>
-  <div class="title-ja">カタカナ</div>
-  <div class="title-en">Katakana Patterns</div>
-</header>
+  <header>
+    <div class="logo-rule">
+      <div class="rule-line"></div>
+      <div class="logo-diamond"></div>
+      <div class="rule-line right"></div>
+    </div>
+    <div class="title-ja">カタカナ</div>
+    <div class="title-en">Katakana Patterns</div>
+  </header>
 
-<div class="overall-progress">
-  <span>Mastered: <strong id="masteredCount">0</strong> / <strong id="totalKana">0</strong></span>
-  <div class="prog-track"><div class="prog-fill" id="overallFill" style="width:0%"></div></div>
-  <span id="overallPct">0%</span>
-</div>
+  <div class="mastered-summary" id="masteredSummary"></div>
 
-<div class="chapter-nav" id="chapterNav"></div>
+  <div class="cluster-tiles" id="tilesGrid"></div>
 
-<main id="clustersContainer"></main>
+</div><!-- #indexView -->
 
-</div><!-- .app -->
+<!-- ═══════════ Detail view ═════════════════════════ -->
+<div id="detailView" class="view" style="display:none">
+
+  <a class="back-link" id="backToIndex" href="#">← Clusters</a>
+
+  <div class="detail-container" id="detailContent"></div>
+
+</div><!-- #detailView -->
 
 <!-- MINI QUIZ MODAL -->
 <div class="modal-bg" id="modalBg" onclick="handleModalBgClick(event)">
@@ -596,122 +562,108 @@ header {
 <script>
 // ── State ──────────────────────────────────────────
 let learnedSet = new Set(JSON.parse(localStorage.getItem('kp_learned') || '[]'));
-let openClusters = new Set();
+let currentClusterIndex = null;
 let quizCluster = null;
 let quizQ = [];
 let quizIdx = 0;
 let quizHits = 0;
 let pipResults = [];
 
-// ── Render ─────────────────────────────────────────
-function render() {
-  renderNav();
-  renderClusters();
-  updateOverall();
+// ── Views ──────────────────────────────────────────
+function showIndex() {
+  document.getElementById('indexView').style.display = 'contents';
+  document.getElementById('detailView').style.display = 'none';
+  buildIndexTiles();
+  updateMasteredSummary();
 }
 
-function renderNav() {
-  const nav = document.getElementById('chapterNav');
-  nav.innerHTML = clusters.map((c, i) => {
+function showDetail(i) {
+  currentClusterIndex = i;
+  document.getElementById('indexView').style.display = 'none';
+  document.getElementById('detailView').style.display = 'contents';
+  renderDetail();
+}
+
+// ── Index ──────────────────────────────────────────
+function buildIndexTiles() {
+  const grid = document.getElementById('tilesGrid');
+  grid.innerHTML = '';
+  clusters.forEach((c, i) => {
     const allLearned = c.kana.every(k => learnedSet.has(k.k));
-    return `<button class="ch-btn ${allLearned ? 'active' : ''}"
-      onclick="scrollToCluster('${c.id}')">
-      ${allLearned ? '✓ ' : ''}${i + 1}. ${c.kana.map(k => k.k).join(' ')}
-    </button>`;
-  }).join('');
+    const preview = c.kana.slice(0, 2).map(k => k.k).join('');
+    const tile = document.createElement('div');
+    tile.className = 'cluster-tile';
+    tile.innerHTML = `
+      <div class="tile-kana-preview">${preview}</div>
+      <div class="tile-cluster-name">${c.title}</div>
+      ${allLearned ? '<div class="tile-mastered-badge">✓ Mastered</div>' : ''}`;
+    tile.addEventListener('click', () => showDetail(i));
+    grid.appendChild(tile);
+  });
 }
 
-function renderClusters() {
-  const container = document.getElementById('clustersContainer');
-  container.innerHTML = clusters.map((c, ci) => {
-    const allLearned = c.kana.every(k => learnedSet.has(k.k));
-    const isOpen = openClusters.has(c.id);
-
-    // Kana panels with VS dividers interleaved
-    let compHTML = '';
-    c.kana.forEach((k, i) => {
-      const isLearned = learnedSet.has(k.k);
-      compHTML += `
-        <div class="kana-panel ${isLearned ? 'learned' : ''}"
-          onclick="toggleKanaLearned('${k.k}')">
-          <span class="learned-tick">✓</span>
-          <div class="kana-glyph" style="color:${c.theme}">${k.k}</div>
-          <div class="kana-roman" style="color:${c.theme}">${k.r.toUpperCase()}</div>
-          <div class="kana-mnemonic">${k.mnemonic}</div>
-          <button class="kana-sound-btn" onclick="event.stopPropagation();speak('${k.k}','${k.r}')">🔊 Listen</button>
-        </div>`;
-      if (i < c.kana.length - 1) {
-        compHTML += `<div class="vs-divider"><div class="vs-label">VS</div></div>`;
-      }
-    });
-
-    // Examples
-    const examplesHTML = c.kana.map(k =>
-      (k.examples || []).slice(0, 2).map(ex => `
-        <div class="ex-chip" onclick="speak('${ex.k}','${ex.r}')">
-          <div class="ex-kana">${ex.k}</div>
-          <div class="ex-rom">${ex.r}</div>
-          <div class="ex-eng">${ex.e}</div>
-        </div>`).join('')
-    ).join('');
-
-    return `
-      <div class="cluster-card ${isOpen ? 'open' : ''}" id="cluster-${c.id}">
-        <div class="cluster-header" onclick="toggleCluster('${c.id}')">
-          <div class="cluster-badge" style="background:${c.theme}">${ci + 1}</div>
-          <div style="flex:1">
-            <div class="cluster-title">${c.title}</div>
-            <div class="cluster-subtitle">${c.subtitle}</div>
-          </div>
-          <div class="cluster-chars-preview">${c.kana.map(k => k.k).join('・')}</div>
-          ${allLearned ? `<div class="cluster-mastered-badge">✓ Mastered</div>` : ''}
-          <div class="cluster-toggle">▼</div>
-        </div>
-        <div class="cluster-body">
-          <div class="comparison">${compHTML}</div>
-          <div class="diff-box">🔍 <strong>Spot the Difference:</strong><br>${c.diff}</div>
-          <div class="examples-label">Examples — click to hear</div>
-          <div class="examples-row">${examplesHTML}</div>
-          <button class="cluster-quiz-btn"
-            style="background:${c.theme}"
-            onclick="startClusterQuiz('${c.id}')">
-            Quiz This Cluster — ${c.kana.length * 2} Questions
-          </button>
-        </div>
-      </div>`;
-  }).join('');
-}
-
-function updateOverall() {
+function updateMasteredSummary() {
   const total = clusters.reduce((a, c) => a + c.kana.length, 0);
   const count = learnedSet.size;
-  document.getElementById('totalKana').textContent = total;
-  document.getElementById('masteredCount').textContent = count;
-  const pct = Math.round((count / total) * 100);
-  document.getElementById('overallFill').style.width = pct + '%';
-  document.getElementById('overallPct').textContent = pct + '%';
+  document.getElementById('masteredSummary').textContent = `Mastered: ${count} / ${total}`;
 }
 
-function scrollToCluster(id) {
-  openClusters.add(id);
-  render();
-  setTimeout(() => {
-    const el = document.getElementById('cluster-' + id);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 50);
+// ── Detail ─────────────────────────────────────────
+function renderDetail() {
+  if (currentClusterIndex === null) return;
+  const c = clusters[currentClusterIndex];
+
+  let compHTML = '';
+  c.kana.forEach((k, i) => {
+    const isLearned = learnedSet.has(k.k);
+    compHTML += `
+      <div class="kana-panel ${isLearned ? 'learned' : ''}"
+        onclick="toggleKanaLearned('${k.k}')">
+        <span class="learned-tick">✓</span>
+        <div class="kana-glyph">${k.k}</div>
+        <div class="kana-roman">${k.r.toUpperCase()}</div>
+        <div class="kana-mnemonic">${k.mnemonic}</div>
+        <button class="kana-sound-btn" onclick="event.stopPropagation();speak('${k.k}','${k.r}')">🔊 Listen</button>
+      </div>`;
+    if (i < c.kana.length - 1) {
+      compHTML += `<div class="vs-divider"><div class="vs-label">VS</div></div>`;
+    }
+  });
+
+  const examplesHTML = c.kana.map(k =>
+    (k.examples || []).slice(0, 2).map(ex => `
+      <div class="ex-chip" onclick="speak('${ex.k}','${ex.r}')">
+        <div class="ex-kana">${ex.k}</div>
+        <div class="ex-rom">${ex.r}</div>
+        <div class="ex-eng">${ex.e}</div>
+      </div>`).join('')
+  ).join('');
+
+  document.getElementById('detailContent').innerHTML = `
+    <div class="detail-header">
+      <div class="detail-badge" style="background:${c.theme}"></div>
+      <div>
+        <div class="detail-title">${c.title}</div>
+        <div class="detail-subtitle">${c.subtitle}</div>
+      </div>
+    </div>
+    <div class="comparison">${compHTML}</div>
+    <div class="diff-box">🔍 <strong>Spot the Difference:</strong><br>${c.diff}</div>
+    <div class="examples-label">Examples — click to hear</div>
+    <div class="examples-row">${examplesHTML}</div>
+    <button class="cluster-quiz-btn btn" onclick="startClusterQuiz('${c.id}')">
+      <span>Quiz This Cluster — ${c.kana.length * 2} Questions</span>
+    </button>`;
 }
 
-function toggleCluster(id) {
-  if (openClusters.has(id)) openClusters.delete(id);
-  else openClusters.add(id);
-  render();
-}
-
+// ── Learned state ──────────────────────────────────
 function toggleKanaLearned(k) {
   if (learnedSet.has(k)) learnedSet.delete(k);
   else learnedSet.add(k);
   localStorage.setItem('kp_learned', JSON.stringify([...learnedSet]));
-  render();
+  renderDetail();
+  buildIndexTiles();
+  updateMasteredSummary();
 }
 
 // ── Speech ─────────────────────────────────────────
@@ -804,7 +756,6 @@ function checkQ(btn, chosen, correct) {
     pipResults[quizIdx] = false;
   }
 
-  // Speak the correct answer
   const q = quizQ[quizIdx];
   const kana = q.type === 'kana2rom' ? q.char : correct;
   const rom  = q.type === 'kana2rom' ? correct : q.char;
@@ -842,7 +793,8 @@ function showResult() {
     localStorage.setItem('kp_learned', JSON.stringify([...learnedSet]));
     document.getElementById('resultMsg').textContent = '🌸 All marked as learned!';
     document.getElementById('resultMsg').style.color = '#2a9d8f';
-    render();
+    renderDetail();
+    buildIndexTiles();
   }
   pipResults = [];
 }
@@ -853,7 +805,9 @@ function retryQuiz() {
 
 function closeModal() {
   document.getElementById('modalBg').classList.remove('open');
-  render();
+  renderDetail();
+  buildIndexTiles();
+  updateMasteredSummary();
 }
 
 function handleModalBgClick(e) {
@@ -861,8 +815,14 @@ function handleModalBgClick(e) {
 }
 
 // ── Init ───────────────────────────────────────────
+document.getElementById('backToIndex').addEventListener('click', e => {
+  e.preventDefault();
+  showIndex();
+});
 speechSynthesis.onvoiceschanged = () => {};
-render();
+buildIndexTiles();
+updateMasteredSummary();
+showIndex();
 </script>
 </body>
 </html>
