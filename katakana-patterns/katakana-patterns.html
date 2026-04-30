@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>カタカナ · Katakana Patterns</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;500&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../shared.css">
+<script src="katakana-data.js"></script>
+<style>
+body {
+  padding: 2.5rem 1.5rem 5rem;
+}
+
+.app {
+  max-width: 860px;
+  width: 100%;
+}
+
+/* ── Header ───────────────────────────────────── */
+header {
+  margin-bottom: 2.5rem;
+}
+
+.title-ja {
+  font-size: clamp(2rem, 6vw, 3rem);
+}
+
+/* ── Progress ─────────────────────────────────── */
+.overall-progress {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+}
+.overall-progress strong { color: var(--gold); font-weight: 600; }
+.prog-track {
+  flex: 1;
+  height: 3px;
+  background: rgba(201,168,108,0.12);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.prog-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--gold);
+  transition: width 0.5s ease;
+}
+
+/* ── Chapter nav ──────────────────────────────── */
+.chapter-nav {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+  justify-content: center;
+}
+.ch-btn {
+  padding: 6px 13px;
+  border: 1px solid var(--border-soft);
+  border-radius: 3px;
+  background: transparent;
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.ch-btn:hover {
+  border-color: var(--gold-dim);
+  color: var(--gold);
+}
+.ch-btn.active {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: rgba(201,168,108,0.08);
+}
+
+/* ── Screen transition ─────────────────────────── */
+.screen { display: none; }
+.screen.active { display: block; animation: slideIn 0.3s ease; }
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Cluster card ─────────────────────────────── */
+.cluster-card {
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  margin-bottom: 14px;
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.cluster-card:hover {
+  border-color: rgba(201,168,108,0.3);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+}
+
+.cluster-header {
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1px solid transparent;
+  cursor: pointer;
+  user-select: none;
+  transition: border-color 0.2s;
+}
+.cluster-card.open .cluster-header {
+  border-bottom-color: var(--border-soft);
+}
+
+.cluster-badge {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: white;
+  flex-shrink: 0;
+}
+.cluster-title {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-weight: 500;
+  font-size: 0.88rem;
+  color: var(--text-body);
+  flex: 1;
+}
+.cluster-subtitle {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  margin-top: 2px;
+}
+.cluster-chars-preview {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 1.15rem;
+  color: var(--text-dim);
+  letter-spacing: 4px;
+}
+.cluster-toggle {
+  font-size: 0.65rem;
+  color: var(--gold-dim);
+  transition: transform 0.2s;
+}
+.cluster-card.open .cluster-toggle { transform: rotate(180deg); }
+.cluster-mastered-badge {
+  font-family: 'Cinzel', serif;
+  font-size: 0.52rem;
+  letter-spacing: 0.15em;
+  background: rgba(42,157,143,0.12);
+  border: 1px solid rgba(42,157,143,0.3);
+  color: #2a9d8f;
+  padding: 3px 8px;
+  border-radius: 2px;
+}
+
+.cluster-body {
+  display: none;
+  padding: 20px;
+}
+.cluster-card.open .cluster-body { display: block; }
+
+/* ── Comparison row ───────────────────────────── */
+.comparison {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+  align-items: stretch;
+}
+
+.kana-panel {
+  flex: 1;
+  min-width: 130px;
+  border: 1px solid var(--border-soft);
+  border-radius: 8px;
+  padding: 18px 14px;
+  text-align: center;
+  position: relative;
+  cursor: pointer;
+  background: rgba(255,255,255,0.02);
+  transition: border-color 0.2s, background 0.2s, transform 0.2s;
+}
+.kana-panel:hover {
+  transform: translateY(-2px);
+  border-color: rgba(201,168,108,0.3);
+}
+.kana-panel.learned {
+  border-color: rgba(42,157,143,0.35);
+  background: rgba(42,157,143,0.05);
+}
+.kana-panel .learned-tick {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  color: #2a9d8f;
+  font-family: 'Cinzel', serif;
+  font-size: 0.65rem;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.kana-panel.learned .learned-tick { opacity: 1; }
+
+.kana-glyph {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 4rem;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.kana-roman {
+  font-family: 'Cinzel', serif;
+  font-size: 0.82rem;
+  letter-spacing: 0.2em;
+  margin-bottom: 10px;
+}
+.kana-mnemonic {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  line-height: 1.6;
+  font-weight: 300;
+}
+.kana-sound-btn {
+  margin-top: 10px;
+  background: none;
+  border: 1px solid var(--border-soft);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 0.65rem;
+  cursor: pointer;
+  font-family: 'Cinzel', serif;
+  color: var(--text-dim);
+  transition: border-color 0.15s, color 0.15s;
+}
+.kana-sound-btn:hover {
+  border-color: var(--gold-dim);
+  color: var(--gold);
+}
+
+/* ── VS divider ───────────────────────────────── */
+.vs-divider {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 2px;
+  flex-shrink: 0;
+}
+.vs-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.5rem;
+  letter-spacing: 0.25em;
+  color: var(--gold-dim);
+  writing-mode: vertical-rl;
+  background: rgba(201,168,108,0.05);
+  padding: 8px 5px;
+  border-radius: 2px;
+  border: 1px solid var(--border-soft);
+}
+
+/* ── Diff annotation ──────────────────────────── */
+.diff-box {
+  background: rgba(201,168,108,0.04);
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  padding: 14px 16px;
+  margin-bottom: 18px;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 300;
+  line-height: 1.75;
+  color: var(--text-body);
+}
+.diff-box strong { color: var(--gold); font-weight: 500; }
+.diff-box .tip { color: #7fbbd8; font-weight: 400; }
+
+/* ── Examples ─────────────────────────────────── */
+.examples-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.5rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 10px;
+}
+.examples-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.ex-chip {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.ex-chip:hover {
+  border-color: rgba(201,168,108,0.3);
+  background: rgba(201,168,108,0.05);
+}
+.ex-kana {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 0.95rem;
+  color: var(--text-body);
+}
+.ex-rom {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.05em;
+  color: var(--text-dim);
+}
+.ex-eng {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 0.65rem;
+  color: var(--gold-dim);
+  font-weight: 400;
+}
+
+/* ── Quiz button ──────────────────────────────── */
+.cluster-quiz-btn {
+  display: block;
+  width: 100%;
+  margin-top: 18px;
+  padding: 12px;
+  border-radius: 4px;
+  border: none;
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: white;
+  transition: opacity 0.18s, transform 0.15s;
+}
+.cluster-quiz-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+
+/* ── Modal ────────────────────────────────────── */
+.modal-bg {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(8px);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+}
+.modal-bg.open { display: flex; }
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  padding: 32px 28px;
+  max-width: 440px;
+  width: 90%;
+  position: relative;
+  animation: popIn 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes popIn {
+  from { transform: scale(0.85) translateY(16px); opacity: 0; }
+  to   { transform: scale(1) translateY(0); opacity: 1; }
+}
+.modal-x {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-family: 'Cinzel', serif;
+  font-size: 0.9rem;
+  cursor: pointer;
+  color: var(--text-dim);
+  transition: color 0.15s;
+}
+.modal-x:hover { color: var(--gold); }
+
+/* ── Quiz state ───────────────────────────────── */
+.quiz-state { text-align: center; }
+.quiz-pip-row {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.quiz-pip {
+  width: 22px;
+  height: 3px;
+  border-radius: 2px;
+  background: rgba(201,168,108,0.15);
+}
+.quiz-pip.hit  { background: #2a9d8f; }
+.quiz-pip.miss { background: #c9463c; }
+.quiz-pip.active { background: var(--gold); }
+
+.quiz-q-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.52rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+}
+.quiz-big-char {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 6rem;
+  line-height: 1;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
+.quiz-opts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.quiz-opt-btn {
+  padding: 14px 8px;
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  background: rgba(255,255,255,0.02);
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+  color: var(--text-body);
+}
+.quiz-opt-btn:hover:not(:disabled) {
+  border-color: rgba(201,168,108,0.4);
+  background: rgba(201,168,108,0.06);
+  color: var(--gold);
+}
+.quiz-opt-btn.correct {
+  border-color: #2a9d8f !important;
+  background: rgba(42,157,143,0.12) !important;
+  color: #2a9d8f !important;
+}
+.quiz-opt-btn.wrong {
+  border-color: #c9463c !important;
+  background: rgba(201,70,60,0.08) !important;
+  color: #c9463c !important;
+}
+.quiz-feedback-txt {
+  font-family: 'Noto Sans JP', sans-serif;
+  min-height: 28px;
+  margin-top: 12px;
+  font-size: 0.78rem;
+  font-weight: 300;
+}
+.quiz-next-btn {
+  margin-top: 14px;
+  width: 100%;
+  padding: 11px;
+  border-radius: 4px;
+  border: 1px solid var(--gold-dim);
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  cursor: pointer;
+  background: transparent;
+  color: var(--gold);
+  display: none;
+  transition: background 0.15s;
+}
+.quiz-next-btn:hover { background: rgba(201,168,108,0.08); }
+.quiz-next-btn.show { display: block; }
+
+/* ── Result state ─────────────────────────────── */
+.result-state { text-align: center; }
+.result-score {
+  font-family: 'Cinzel', serif;
+  font-size: 3rem;
+  font-weight: 600;
+  color: var(--gold);
+  margin: 10px 0 4px;
+}
+.result-msg {
+  font-family: 'Noto Sans JP', sans-serif;
+  color: var(--text-dim);
+  font-size: 0.82rem;
+  font-weight: 300;
+  margin-bottom: 20px;
+}
+.result-btns { display: flex; gap: 8px; }
+.result-btns button {
+  flex: 1;
+  padding: 11px;
+  border-radius: 4px;
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+.btn-retry {
+  background: transparent;
+  border: 1px solid var(--border-soft);
+  color: var(--text-body);
+  transition: border-color 0.15s, color 0.15s;
+}
+.btn-retry:hover { border-color: var(--gold-dim); color: var(--gold); }
+.btn-next-cluster {
+  background: rgba(201,168,108,0.08);
+  border: 1px solid var(--gold-dim);
+  color: var(--gold);
+  transition: background 0.15s;
+}
+.btn-next-cluster:hover { background: rgba(201,168,108,0.16); }
+
+/* ── Scrollbar ────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: rgba(201,168,108,0.2); border-radius: 3px; }
+
+@media (max-width: 520px) {
+  .kana-glyph { font-size: 3rem; }
+  .modal { padding: 24px 16px; }
+  .quiz-big-char { font-size: 4.5rem; }
+}
+</style>
+</head>
+<body>
+
+<a class="back-link" href="../index.html">← All Tools</a>
+
+<div class="app">
+
+<header>
+  <div class="logo-rule">
+    <div class="rule-line"></div>
+    <div class="logo-diamond"></div>
+    <div class="rule-line right"></div>
+  </div>
+  <div class="title-ja">カタカナ</div>
+  <div class="title-en">Katakana Patterns</div>
+</header>
+
+<div class="overall-progress">
+  <span>Mastered: <strong id="masteredCount">0</strong> / <strong id="totalKana">0</strong></span>
+  <div class="prog-track"><div class="prog-fill" id="overallFill" style="width:0%"></div></div>
+  <span id="overallPct">0%</span>
+</div>
+
+<div class="chapter-nav" id="chapterNav"></div>
+
+<main id="clustersContainer"></main>
+
+</div><!-- .app -->
+
+<!-- MINI QUIZ MODAL -->
+<div class="modal-bg" id="modalBg" onclick="handleModalBgClick(event)">
+  <div class="modal" id="modalBox">
+    <button class="modal-x" onclick="closeModal()">✕</button>
+    <div class="quiz-state" id="quizState" style="display:none">
+      <div class="quiz-pip-row" id="pipRow"></div>
+      <div class="quiz-q-label" id="qLabel"></div>
+      <div class="quiz-big-char" id="qChar"></div>
+      <div class="quiz-opts" id="qOpts"></div>
+      <div class="quiz-feedback-txt" id="qFeedback"></div>
+      <button class="quiz-next-btn" id="qNext" onclick="nextQ()">Next →</button>
+    </div>
+    <div class="result-state" id="resultState" style="display:none">
+      <div style="font-size:2.2rem" id="resultEmoji"></div>
+      <div class="result-score" id="resultScore"></div>
+      <div class="result-msg" id="resultMsg"></div>
+      <div class="result-btns">
+        <button class="btn-retry" onclick="retryQuiz()">↩ Retry</button>
+        <button class="btn-next-cluster" id="btnNextCluster" onclick="closeModal()">Continue ✓</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer>Learn by pattern · spot the difference · never confuse them again</footer>
+
+<script>
+// ── State ──────────────────────────────────────────
+let learnedSet = new Set(JSON.parse(localStorage.getItem('kp_learned') || '[]'));
+let openClusters = new Set();
+let quizCluster = null;
+let quizQ = [];
+let quizIdx = 0;
+let quizHits = 0;
+let pipResults = [];
+
+// ── Render ─────────────────────────────────────────
+function render() {
+  renderNav();
+  renderClusters();
+  updateOverall();
+}
+
+function renderNav() {
+  const nav = document.getElementById('chapterNav');
+  nav.innerHTML = clusters.map((c, i) => {
+    const allLearned = c.kana.every(k => learnedSet.has(k.k));
+    return `<button class="ch-btn ${allLearned ? 'active' : ''}"
+      onclick="scrollToCluster('${c.id}')">
+      ${allLearned ? '✓ ' : ''}${i + 1}. ${c.kana.map(k => k.k).join(' ')}
+    </button>`;
+  }).join('');
+}
+
+function renderClusters() {
+  const container = document.getElementById('clustersContainer');
+  container.innerHTML = clusters.map((c, ci) => {
+    const allLearned = c.kana.every(k => learnedSet.has(k.k));
+    const isOpen = openClusters.has(c.id);
+
+    // Kana panels with VS dividers interleaved
+    let compHTML = '';
+    c.kana.forEach((k, i) => {
+      const isLearned = learnedSet.has(k.k);
+      compHTML += `
+        <div class="kana-panel ${isLearned ? 'learned' : ''}"
+          onclick="toggleKanaLearned('${k.k}')">
+          <span class="learned-tick">✓</span>
+          <div class="kana-glyph" style="color:${c.theme}">${k.k}</div>
+          <div class="kana-roman" style="color:${c.theme}">${k.r.toUpperCase()}</div>
+          <div class="kana-mnemonic">${k.mnemonic}</div>
+          <button class="kana-sound-btn" onclick="event.stopPropagation();speak('${k.k}','${k.r}')">🔊 Listen</button>
+        </div>`;
+      if (i < c.kana.length - 1) {
+        compHTML += `<div class="vs-divider"><div class="vs-label">VS</div></div>`;
+      }
+    });
+
+    // Examples
+    const examplesHTML = c.kana.map(k =>
+      (k.examples || []).slice(0, 2).map(ex => `
+        <div class="ex-chip" onclick="speak('${ex.k}','${ex.r}')">
+          <div class="ex-kana">${ex.k}</div>
+          <div class="ex-rom">${ex.r}</div>
+          <div class="ex-eng">${ex.e}</div>
+        </div>`).join('')
+    ).join('');
+
+    return `
+      <div class="cluster-card ${isOpen ? 'open' : ''}" id="cluster-${c.id}">
+        <div class="cluster-header" onclick="toggleCluster('${c.id}')">
+          <div class="cluster-badge" style="background:${c.theme}">${ci + 1}</div>
+          <div style="flex:1">
+            <div class="cluster-title">${c.title}</div>
+            <div class="cluster-subtitle">${c.subtitle}</div>
+          </div>
+          <div class="cluster-chars-preview">${c.kana.map(k => k.k).join('・')}</div>
+          ${allLearned ? `<div class="cluster-mastered-badge">✓ Mastered</div>` : ''}
+          <div class="cluster-toggle">▼</div>
+        </div>
+        <div class="cluster-body">
+          <div class="comparison">${compHTML}</div>
+          <div class="diff-box">🔍 <strong>Spot the Difference:</strong><br>${c.diff}</div>
+          <div class="examples-label">Examples — click to hear</div>
+          <div class="examples-row">${examplesHTML}</div>
+          <button class="cluster-quiz-btn"
+            style="background:${c.theme}"
+            onclick="startClusterQuiz('${c.id}')">
+            Quiz This Cluster — ${c.kana.length * 2} Questions
+          </button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function updateOverall() {
+  const total = clusters.reduce((a, c) => a + c.kana.length, 0);
+  const count = learnedSet.size;
+  document.getElementById('totalKana').textContent = total;
+  document.getElementById('masteredCount').textContent = count;
+  const pct = Math.round((count / total) * 100);
+  document.getElementById('overallFill').style.width = pct + '%';
+  document.getElementById('overallPct').textContent = pct + '%';
+}
+
+function scrollToCluster(id) {
+  openClusters.add(id);
+  render();
+  setTimeout(() => {
+    const el = document.getElementById('cluster-' + id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 50);
+}
+
+function toggleCluster(id) {
+  if (openClusters.has(id)) openClusters.delete(id);
+  else openClusters.add(id);
+  render();
+}
+
+function toggleKanaLearned(k) {
+  if (learnedSet.has(k)) learnedSet.delete(k);
+  else learnedSet.add(k);
+  localStorage.setItem('kp_learned', JSON.stringify([...learnedSet]));
+  render();
+}
+
+// ── Speech ─────────────────────────────────────────
+function speak(kana, romaji) {
+  const u = new SpeechSynthesisUtterance();
+  u.rate = 0.8;
+  const voices = speechSynthesis.getVoices();
+  const ja = voices.find(v => v.lang.startsWith('ja'));
+  if (ja) { u.voice = ja; u.text = kana; u.lang = 'ja-JP'; }
+  else     { u.text = romaji; u.lang = 'en-US'; }
+  speechSynthesis.cancel();
+  speechSynthesis.speak(u);
+}
+
+// ── Quiz ───────────────────────────────────────────
+function startClusterQuiz(id) {
+  quizCluster = clusters.find(c => c.id === id);
+  if (!quizCluster) return;
+
+  const pool = [];
+  quizCluster.kana.forEach(k => {
+    pool.push({ type: 'kana2rom', char: k.k, answer: k.r, allKana: quizCluster.kana });
+    pool.push({ type: 'rom2kana', char: k.r.toUpperCase(), answer: k.k, allKana: quizCluster.kana });
+  });
+  quizQ = pool.sort(() => Math.random() - 0.5);
+  quizIdx = 0;
+  quizHits = 0;
+  pipResults = [];
+
+  document.getElementById('quizState').style.display = 'block';
+  document.getElementById('resultState').style.display = 'none';
+  document.getElementById('modalBg').classList.add('open');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const q = quizQ[quizIdx];
+  updatePips();
+  document.getElementById('qLabel').textContent = q.type === 'kana2rom'
+    ? 'What sound does this make?' : 'Which character is this?';
+  document.getElementById('qChar').textContent = q.char;
+  document.getElementById('qFeedback').textContent = '';
+  document.getElementById('qNext').classList.remove('show');
+
+  const others = q.allKana.filter(k =>
+    (q.type === 'kana2rom' ? k.r : k.k) !== q.answer
+  );
+  const wrongs = others.sort(() => Math.random() - 0.5).slice(0, 3);
+  const opts = [
+    ...wrongs.map(k => q.type === 'kana2rom' ? k.r.toUpperCase() : k.k),
+    q.type === 'kana2rom' ? q.answer.toUpperCase() : q.answer
+  ].sort(() => Math.random() - 0.5);
+
+  document.getElementById('qOpts').innerHTML = opts.map(opt => `
+    <button class="quiz-opt-btn" onclick="checkQ(this, '${opt}', '${q.type === 'kana2rom' ? q.answer.toUpperCase() : q.answer}')">
+      ${opt}
+    </button>`).join('');
+}
+
+function updatePips() {
+  document.getElementById('pipRow').innerHTML = quizQ.map((_, i) =>
+    `<div class="quiz-pip ${i < quizIdx ? (pipResults[i] ? 'hit' : 'miss') : i === quizIdx ? 'active' : ''}"></div>`
+  ).join('');
+}
+
+function checkQ(btn, chosen, correct) {
+  document.querySelectorAll('.quiz-opt-btn').forEach(b => b.disabled = true);
+  const isRight = chosen.toUpperCase() === correct.toUpperCase();
+
+  if (isRight) {
+    btn.classList.add('correct');
+    quizHits++;
+    const cheers = ['Correct!', 'Yes!', 'Nice!', 'Perfect!', 'Sharp eye!'];
+    document.getElementById('qFeedback').textContent = cheers[Math.floor(Math.random() * cheers.length)];
+    document.getElementById('qFeedback').style.color = '#2a9d8f';
+    pipResults[quizIdx] = true;
+  } else {
+    btn.classList.add('wrong');
+    document.querySelectorAll('.quiz-opt-btn').forEach(b => {
+      if (b.textContent.trim().toUpperCase() === correct.toUpperCase()) b.classList.add('correct');
+    });
+    const q = quizQ[quizIdx];
+    const correctKana = q.allKana.find(k =>
+      q.type === 'kana2rom' ? k.r.toUpperCase() === correct.toUpperCase() : k.k === correct
+    );
+    document.getElementById('qFeedback').textContent = correctKana
+      ? `It's "${correct}" — ${correctKana.mnemonic.slice(0, 55)}...`
+      : `It's "${correct}"`;
+    document.getElementById('qFeedback').style.color = '#c9463c';
+    pipResults[quizIdx] = false;
+  }
+
+  // Speak the correct answer
+  const q = quizQ[quizIdx];
+  const kana = q.type === 'kana2rom' ? q.char : correct;
+  const rom  = q.type === 'kana2rom' ? correct : q.char;
+  speak(kana, rom.toLowerCase());
+
+  document.getElementById('qNext').classList.add('show');
+}
+
+function nextQ() {
+  quizIdx++;
+  if (quizIdx >= quizQ.length) showResult();
+  else renderQuestion();
+}
+
+function showResult() {
+  document.getElementById('quizState').style.display = 'none';
+  document.getElementById('resultState').style.display = 'block';
+  const pct = Math.round((quizHits / quizQ.length) * 100);
+  const emojis = ['😬','🤔','😊','🔥','🏆'];
+  const msgs   = [
+    'Keep drilling! Repetition wins.',
+    'Getting there! Try again.',
+    'Solid! Almost there.',
+    'Great job! Nearly perfect.',
+    'Flawless! You own this cluster.'
+  ];
+  const tier = Math.min(Math.floor(pct / 21), 4);
+  document.getElementById('resultEmoji').textContent = emojis[tier];
+  document.getElementById('resultScore').textContent = `${quizHits}/${quizQ.length}`;
+  document.getElementById('resultMsg').textContent = msgs[tier];
+  document.getElementById('resultMsg').style.color = '';
+
+  if (pct === 100 && quizCluster) {
+    quizCluster.kana.forEach(k => learnedSet.add(k.k));
+    localStorage.setItem('kp_learned', JSON.stringify([...learnedSet]));
+    document.getElementById('resultMsg').textContent = '🌸 All marked as learned!';
+    document.getElementById('resultMsg').style.color = '#2a9d8f';
+    render();
+  }
+  pipResults = [];
+}
+
+function retryQuiz() {
+  if (quizCluster) startClusterQuiz(quizCluster.id);
+}
+
+function closeModal() {
+  document.getElementById('modalBg').classList.remove('open');
+  render();
+}
+
+function handleModalBgClick(e) {
+  if (e.target === document.getElementById('modalBg')) closeModal();
+}
+
+// ── Init ───────────────────────────────────────────
+speechSynthesis.onvoiceschanged = () => {};
+render();
+</script>
+</body>
+</html>
