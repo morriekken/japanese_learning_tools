@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>日本語学習ツール · Japanese Learning Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;500&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after {
+  margin: 0; padding: 0; box-sizing: border-box;
+}
+
+:root {
+  --bg:          #0c0c0f;
+  --surface:     #13131a;
+  --gold:        #c9a86c;
+  --gold-dim:    #7a6340;
+  --blue-deep:   #12203a;
+  --text-muted:  #3a3a4a;
+  --text-dim:    #555568;
+  --text-body:   #999aaa;
+  --border-soft: rgba(201,168,108,0.15);
+}
+
+html, body {
+  min-height: 100%;
+}
+
+body {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(201,168,108,0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 80% 110%, rgba(18,32,58,0.4) 0%, transparent 70%);
+  font-family: 'Noto Sans JP', sans-serif;
+  color: var(--text-body);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 3rem 1.5rem 5rem;
+}
+
+/* ── Header ──────────────────────────────────────── */
+header {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+
+.logo-rule {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: center;
+  margin-bottom: 0.6rem;
+}
+
+.rule-line {
+  width: 80px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold-dim));
+}
+.rule-line.right {
+  background: linear-gradient(to left, transparent, var(--gold-dim));
+}
+
+.logo-diamond {
+  width: 6px; height: 6px;
+  background: var(--gold);
+  transform: rotate(45deg);
+  opacity: 0.7;
+}
+
+.title-ja {
+  font-family: 'Noto Serif JP', serif;
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  font-weight: 900;
+  color: var(--gold);
+  letter-spacing: 0.2em;
+  line-height: 1;
+}
+
+.title-en {
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  color: var(--text-dim);
+  letter-spacing: 0.6em;
+  text-transform: uppercase;
+  margin-top: 0.55rem;
+}
+
+.subtitle {
+  font-family: 'Cinzel', serif;
+  font-size: 0.52rem;
+  color: var(--text-muted);
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  margin-top: 1.6rem;
+}
+
+/* ── Tool grid ───────────────────────────────────── */
+.tools-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.2rem;
+  width: 100%;
+  max-width: 760px;
+}
+
+/* ── Tool tile ───────────────────────────────────── */
+.tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  padding: 2rem 1.6rem 1.6rem;
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  transition: border-color 0.22s, box-shadow 0.22s, transform 0.22s;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.4);
+}
+
+.tile::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(201,168,108,0.07) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.22s;
+}
+
+.tile:hover {
+  border-color: rgba(201,168,108,0.4);
+  box-shadow: 0 6px 32px rgba(0,0,0,0.55), 0 0 0 1px rgba(201,168,108,0.08);
+  transform: translateY(-3px);
+}
+
+.tile:hover::before {
+  opacity: 1;
+}
+
+.tile-kanji {
+  font-family: 'Noto Serif JP', serif;
+  font-weight: 900;
+  font-size: 2.4rem;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 0.9rem;
+  opacity: 0.9;
+}
+
+.tile-name-en {
+  font-family: 'Cinzel', serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.2rem;
+}
+
+.tile-name-ja {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  letter-spacing: 0.15em;
+  margin-bottom: 1rem;
+}
+
+.tile-desc {
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 300;
+  color: var(--text-body);
+  line-height: 1.7;
+  flex: 1;
+}
+
+.tile-arrow {
+  margin-top: 1.4rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  transition: color 0.18s, letter-spacing 0.18s;
+}
+
+.tile:hover .tile-arrow {
+  color: var(--gold);
+  letter-spacing: 0.5em;
+}
+
+/* Corner accent */
+.tile::after {
+  content: '';
+  position: absolute;
+  bottom: 10px; right: 10px;
+  width: 6px; height: 6px;
+  border-right: 1px solid rgba(201,168,108,0.3);
+  border-bottom: 1px solid rgba(201,168,108,0.3);
+}
+
+/* ── Footer ──────────────────────────────────────── */
+footer {
+  margin-top: 4rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.5rem;
+  letter-spacing: 0.35em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  text-align: center;
+}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-rule">
+    <div class="rule-line"></div>
+    <div class="logo-diamond"></div>
+    <div class="rule-line right"></div>
+  </div>
+  <div class="title-ja">日本語学習ツール</div>
+  <div class="title-en">Japanese Learning Tools</div>
+  <div class="subtitle">A collection of study aids</div>
+</header>
+
+<div class="tools-grid">
+
+  <a class="tile" href="kanji-flip/kanji-flip.html">
+    <div class="tile-kanji">漢字</div>
+    <div class="tile-name-en">Kanji Flip</div>
+    <div class="tile-name-ja">漢字フリップ</div>
+    <div class="tile-desc">Flash-card deck for practising kanji characters — tap to reveal reading and meaning.</div>
+    <div class="tile-arrow">Open →</div>
+  </a>
+
+</div>
+
+<footer>More tools coming soon</footer>
+
+</body>
+</html>
