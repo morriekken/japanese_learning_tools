@@ -46,6 +46,20 @@ body {
   user-select: none;
 }
 
+/* ── Back link ───────────────────────────────────── */
+.back-link {
+  align-self: flex-start;
+  font-family: 'Cinzel', serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--gold-dim);
+  text-decoration: none;
+  margin-bottom: 1.5rem;
+  transition: color 0.18s;
+}
+.back-link:hover { color: var(--gold); }
+
 /* ── Header ─────────────────────────────────────── */
 header {
   text-align: center;
@@ -293,6 +307,8 @@ header {
 </style>
 </head>
 <body>
+
+<a class="back-link" href="../index.html">← Home</a>
 
 <header>
   <div class="logo-rule">
