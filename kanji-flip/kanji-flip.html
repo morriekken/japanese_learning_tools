@@ -17,9 +17,7 @@
   --back-meaning: #9fb8d8;
 }
 
-html, body {
-  height: 100%;
-}
+html, body { height: 100%; }
 
 body {
   color: #ccc;
@@ -27,13 +25,66 @@ body {
   user-select: none;
 }
 
+/* View containers — display:contents so children are direct flex items of body */
+.view { display: contents; }
+
 /* ── Header ─────────────────────────────────────── */
-header {
-  margin-bottom: 2.5rem;
+header { margin-bottom: 2.5rem; }
+.title-ja { font-size: clamp(2rem, 6vw, 3rem); }
+
+/* ── Group index tiles ───────────────────────────── */
+.group-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+  width: 100%;
+  max-width: 540px;
 }
 
-.title-ja {
-  font-size: clamp(2rem, 6vw, 3rem);
+.group-tile {
+  background: rgba(201,168,108,0.03);
+  border: 1px solid rgba(201,168,108,0.18);
+  border-radius: 6px;
+  padding: 1.5rem 1rem 1.25rem;
+  cursor: pointer;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+
+.group-tile:hover {
+  border-color: rgba(201,168,108,0.5);
+  box-shadow: 0 4px 24px rgba(201,168,108,0.07), 0 2px 10px rgba(0,0,0,0.35);
+  transform: translateY(-2px);
+}
+
+.tile-kanji {
+  font-family: 'Noto Serif JP', serif;
+  font-weight: 900;
+  font-size: 1.9rem;
+  color: var(--kanji-ink);
+  background: var(--card-front);
+  background-image: radial-gradient(ellipse at 30% 30%, rgba(255,255,240,0.5) 0%, transparent 60%);
+  width: 62px;
+  height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  border: 1px solid rgba(201,168,108,0.25);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.6);
+  flex-shrink: 0;
+}
+
+.tile-name {
+  font-family: 'Noto Serif JP', serif;
+  font-size: 0.7rem;
+  color: var(--gold-dim);
+  letter-spacing: 0.08em;
+  line-height: 1.5;
 }
 
 /* ── Group label ─────────────────────────────────── */
@@ -45,7 +96,6 @@ header {
   margin-bottom: 1.5rem;
   min-height: 1.2em;
   text-align: center;
-  transition: opacity 0.3s;
 }
 
 /* ── Card grid ───────────────────────────────────── */
@@ -66,14 +116,12 @@ header {
 .card-inner {
   position: relative;
   width: 100%;
-  padding-top: 130%; /* aspect ratio ~4:3 portrait */
+  padding-top: 130%;
   transform-style: preserve-3d;
   transition: transform 0.52s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-.card-wrap.flipped .card-inner {
-  transform: rotateY(180deg);
-}
+.card-wrap.flipped .card-inner { transform: rotateY(180deg); }
 
 .card-face {
   position: absolute;
@@ -89,11 +137,9 @@ header {
   transition: box-shadow 0.2s;
 }
 
-/* Front — washi paper */
 .card-front {
   background: var(--card-front);
-  background-image:
-    radial-gradient(ellipse at 30% 30%, rgba(255,255,240,0.5) 0%, transparent 60%);
+  background-image: radial-gradient(ellipse at 30% 30%, rgba(255,255,240,0.5) 0%, transparent 60%);
   border: 1px solid rgba(201,168,108,0.25);
   box-shadow:
     0 2px 8px rgba(0,0,0,0.45),
@@ -118,7 +164,6 @@ header {
   letter-spacing: -0.02em;
 }
 
-/* Front corner mark */
 .card-front::after {
   content: '';
   position: absolute;
@@ -128,11 +173,9 @@ header {
   border-bottom: 1px solid rgba(201,168,108,0.4);
 }
 
-/* Back — deep ink */
 .card-back {
   background: var(--card-back);
-  background-image:
-    radial-gradient(ellipse at 50% 0%, rgba(30,80,160,0.2) 0%, transparent 70%);
+  background-image: radial-gradient(ellipse at 50% 0%, rgba(30,80,160,0.2) 0%, transparent 70%);
   border: 1px solid rgba(201,168,108,0.2);
   box-shadow: 0 4px 20px rgba(0,0,0,0.6), inset 0 1px 0 rgba(100,140,200,0.1);
   transform: rotateY(180deg);
@@ -161,8 +204,7 @@ header {
 }
 
 .sep {
-  width: 20px;
-  height: 1px;
+  width: 20px; height: 1px;
   background: rgba(201,168,108,0.25);
   margin: 0.15rem 0;
 }
@@ -172,18 +214,7 @@ header {
   margin-top: 2rem;
   display: flex;
   align-items: center;
-  gap: 1.2rem;
-  flex-wrap: wrap;
   justify-content: center;
-}
-
-.counter {
-  font-family: 'Cinzel', serif;
-  font-size: 0.6rem;
-  color: var(--text-muted);
-  letter-spacing: 0.25em;
-  min-width: 50px;
-  text-align: center;
 }
 
 /* ── Hint ────────────────────────────────────────── */
@@ -197,58 +228,76 @@ header {
   text-align: center;
 }
 
-/* ── Fade transition for group change ────────────── */
-.grid.fading { opacity: 0; transition: opacity 0.15s; }
+/* ── Fade transition ─────────────────────────────── */
+.grid.fading  { opacity: 0; transition: opacity 0.15s; }
 .grid.visible { opacity: 1; transition: opacity 0.25s; }
 </style>
 </head>
 <body>
 
-<a class="back-link" href="../index.html">← Home</a>
+<!-- ═══════════ Index view ══════════════════════════ -->
+<div id="view-index" class="view">
 
-<header>
-  <div class="logo-rule">
-    <div class="rule-line"></div>
-    <div class="logo-diamond"></div>
-    <div class="rule-line right"></div>
-  </div>
-  <div class="title-ja">漢字フリップ</div>
-  <div class="title-en">Kanji Flip · Study Deck</div>
-</header>
+  <a class="back-link" href="../index.html">← Home</a>
 
-<div class="group-label" id="groupLabel">—</div>
+  <header>
+    <div class="logo-rule">
+      <div class="rule-line"></div>
+      <div class="logo-diamond"></div>
+      <div class="rule-line right"></div>
+    </div>
+    <div class="title-ja">漢字フリップ</div>
+    <div class="title-en">Kanji Flip · Select a Group</div>
+  </header>
 
-<div class="grid visible" id="grid"></div>
+  <div class="group-tiles" id="group-tiles"></div>
 
-<div class="controls">
-  <button class="btn" onclick="changeGroup(-1)"><span>← Prev</span></button>
-  <span class="counter" id="counter">1 / 1</span>
-  <button class="btn" onclick="changeGroup(+1)"><span>Next →</span></button>
 </div>
 
-<div class="hint">tap a card to reveal · tap again to hide</div>
+<!-- ═══════════ Group view ══════════════════════════ -->
+<div id="view-group" class="view" style="display:none">
+
+  <a class="back-link" id="back-to-groups" href="#">← Groups</a>
+
+  <div class="group-label" id="groupLabel">—</div>
+  <div class="grid visible" id="grid"></div>
+
+  <div class="controls">
+    <button class="btn" id="btn-random"><span>Next Random →</span></button>
+  </div>
+
+  <div class="hint">tap a card to reveal · tap again to hide</div>
+
+</div>
 
 <script>
 let currentGroup = 0;
 let flippedIndex = null;
 
+function showIndex() {
+  document.getElementById('view-index').style.display = 'contents';
+  document.getElementById('view-group').style.display = 'none';
+}
+
+function showGroup(groupIndex) {
+  currentGroup = groupIndex;
+  document.getElementById('view-index').style.display = 'none';
+  document.getElementById('view-group').style.display = 'contents';
+  render();
+}
+
 function render() {
   const group = KANJI_GROUPS[currentGroup];
   document.getElementById('groupLabel').textContent = group.name;
-  document.getElementById('counter').textContent =
-    `${currentGroup + 1} \u2007/\u2007 ${KANJI_GROUPS.length}`;
 
   const grid = document.getElementById('grid');
   grid.innerHTML = '';
   flippedIndex = null;
 
-  const items = group.kanji.slice(0, 9);
-
-  items.forEach((item, i) => {
+  group.kanji.slice(0, 9).forEach((item, i) => {
     const wrap = document.createElement('div');
     wrap.className = 'card-wrap';
     wrap.id = `cw-${i}`;
-
     wrap.innerHTML = `
       <div class="card-inner">
         <div class="card-face card-front">
@@ -260,7 +309,6 @@ function render() {
           <div class="meaning-text">${item.meaning}</div>
         </div>
       </div>`;
-
     wrap.addEventListener('click', () => flipCard(i));
     grid.appendChild(wrap);
   });
@@ -271,24 +319,45 @@ function flipCard(index) {
     document.getElementById(`cw-${flippedIndex}`).classList.remove('flipped');
   }
   const wrap = document.getElementById(`cw-${index}`);
-  const isFlipped = wrap.classList.toggle('flipped');
-  flippedIndex = isFlipped ? index : null;
+  flippedIndex = wrap.classList.toggle('flipped') ? index : null;
 }
 
-function changeGroup(direction) {
+function nextRandom() {
+  let next;
+  do { next = Math.floor(Math.random() * KANJI_GROUPS.length); }
+  while (next === currentGroup && KANJI_GROUPS.length > 1);
+
   const grid = document.getElementById('grid');
   grid.classList.remove('visible');
   grid.classList.add('fading');
-
   setTimeout(() => {
-    currentGroup = (currentGroup + direction + KANJI_GROUPS.length) % KANJI_GROUPS.length;
+    currentGroup = next;
     render();
     grid.classList.remove('fading');
     grid.classList.add('visible');
   }, 150);
 }
 
-render();
+function buildGroupIndex() {
+  const container = document.getElementById('group-tiles');
+  KANJI_GROUPS.forEach((group, i) => {
+    const tile = document.createElement('div');
+    tile.className = 'group-tile';
+    tile.innerHTML = `
+      <div class="tile-kanji">${group.kanji[0].kanji}</div>
+      <div class="tile-name">${group.name}</div>`;
+    tile.addEventListener('click', () => showGroup(i));
+    container.appendChild(tile);
+  });
+}
+
+document.getElementById('back-to-groups').addEventListener('click', e => {
+  e.preventDefault();
+  showIndex();
+});
+document.getElementById('btn-random').addEventListener('click', nextRandom);
+
+buildGroupIndex();
 </script>
 </body>
 </html>
