@@ -10,19 +10,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ```
 japanese_learning_tools/
-├── index.html              # Landing page — links to all tools
-├── shared.css              # Shared design system (dark theme, gold accents, Japanese fonts)
-├── .nojekyll               # Disables Jekyll on GitHub Pages
-├── LICENSE                 # MIT (2026)
+├── index.html                    # Landing page — links to all tools
+├── shared.css                    # Shared design system (dark theme, gold accents, Japanese fonts)
+├── README.md                     # Minimal GitHub readme (stub)
+├── .nojekyll                     # Disables Jekyll on GitHub Pages
+├── LICENSE                       # MIT (2026)
 ├── kanji-flip/
-│   ├── kanji-flip.html     # Interactive 3D flashcard application
-│   └── kanji-data.js       # Kanji study data organized into groups
-└── katakana-patterns.zip   # Archived katakana patterns tool (see note below)
+│   ├── kanji-flip.html           # Flashcard app with group index + card grid views
+│   └── kanji-data.js             # Kanji study data organised into groups
+├── katakana-patterns/
+│   ├── katakana-patterns.html    # Pattern-based katakana learning tool
+│   └── katakana-data.js          # Katakana cluster data (characters, mnemonics, examples)
+└── katakana-patterns.zip         # Legacy archive — superseded by katakana-patterns/ directory
 ```
-
-### Archived Tools
-
-`katakana-patterns.zip` contains `katakana-patterns.html` — a standalone pattern-based katakana learning tool with chapter navigation and progress tracking. It is not yet linked from the landing page.
 
 ## Tech Stack
 
@@ -48,7 +48,12 @@ Shared CSS provides: `.back-link`, `.tool-header`, `.tool-footer`, button styles
 
 ## Kanji Flip Tool
 
-`kanji-flip/kanji-flip.html` renders a 3×3 grid of flip cards. Each card shows a kanji on the front and furigana + English meaning on the back. Cards are grouped; the user navigates between groups.
+`kanji-flip/kanji-flip.html` has two views rendered inside a single HTML file:
+
+1. **Group index** — a tile grid listing every kanji group; tap a tile to enter that group.
+2. **Card grid** — a 3×3 grid of flip cards. Each card shows a kanji on the front and furigana + English meaning on the back.
+
+The tool uses `display: contents` view containers so both views share the same flex layout root. A back-link returns to the group index (not to `index.html`).
 
 **Adding or editing kanji** — edit `kanji-flip/kanji-data.js`. The data format is:
 
@@ -63,6 +68,30 @@ const kanjiGroups = [
   },
   // ...
 ];
+```
+
+## Katakana Patterns Tool
+
+`katakana-patterns/katakana-patterns.html` teaches katakana by grouping visually similar characters into clusters (e.g. シ/ツ/ソ/ン). Each cluster card shows the characters side-by-side with mnemonics and example words, then offers a quiz.
+
+Data lives in `katakana-patterns/katakana-data.js` as a `clusters` array. Each cluster object:
+
+```js
+{
+  id: 'c0',           // unique string
+  title: '...',       // heading
+  subtitle: '...',    // short description
+  theme: '#e63946',   // accent colour for badge/glyphs
+  kana: [
+    {
+      k: 'シ',        // katakana character
+      r: 'shi',       // romanisation
+      mnemonic: '...', // memory aid
+      examples: [{ k: 'シ...', r: '...', e: 'english' }]
+    }
+  ],
+  diff: '...'         // HTML string explaining visual differences
+}
 ```
 
 ## Adding a New Tool
